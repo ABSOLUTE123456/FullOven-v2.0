@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - FullOven</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: inherit;">
+                    <div class="logo-top">
+                        <span class="logo-name">FULL OVEN</span>
+                        <img src="~/images/Group.svg" alt="icon" class="logo-icon">
+                    </div>
+                    <p class="logo-sub">Ресторан русской кухни</p>
+                </a>
+            </div>
+            <nav class="nav">
+                <a asp-controller="Home" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">главная</a>
+                <a asp-controller="Home" asp-action="Menu" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Menu" ? "active" : "")">меню</a>
+                <a asp-controller="Home" asp-action="Addresses" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Addresses" ? "active" : "")">наши места</a>
+                <a asp-controller="Home" asp-action="Reservation" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reservation" ? "active" : "")">бронирование</a>
+                <a asp-controller="Home" asp-action="Connection" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Connection" ? "active" : "")">контакты</a>
+                <div class="nav-underline"></div>
+            </nav>
+        </div>
+    </header>
+
+    @RenderBody()
+
+    <script>
+        const underline = document.querySelector('.nav-underline');
+        function moveUnderline(element) {
+            if (element) {
+                underline.style.left = element.offsetLeft + 'px';
+                underline.style.width = element.offsetWidth + 'px';
+            }
+        }
+        window.addEventListener('load', () => moveUnderline(document.querySelector('.nav-link.active')));
+        window.addEventListener('resize', () => moveUnderline(document.querySelector('.nav-link.active')));
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Бронирование";
+}
+
+<section class="booking-page">
+    <div class="container">
+        <div class="booking-header">
+            <h1 class="section-title">Бронирование столика</h1>
+            <p class="booking-subtitle">
+                Приглашаем вас насладиться незабываемым ужином.<br>
+                Забронируйте столик уже сегодня!
+            </p>
+        </div>
+
+        <div class="booking-card">
+            <form class="booking-form" method="post">
+                <div class="form-row">
+                    <input type="text" name="Name" placeholder="Введите имя" required>
+                    <input type="email" name="Email" placeholder="Email" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" name="LastName" placeholder="Введите фамилию">
+                    <input type="number" name="Guests" placeholder="Кол-во гостей">
+                </div>
+                <div class="form-row">
+                    <input type="date" name="Date">
+                    <input type="time" name="Time">
+                </div>
+                <textarea name="Message" placeholder="Оставить комментарий" rows="4"></textarea>
+                <button type="submit" class="booking-btn">Забронировать</button>
+            </form>
+        </div>
+    </div>
+</section>

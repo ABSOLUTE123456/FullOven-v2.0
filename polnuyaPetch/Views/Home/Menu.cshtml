@@ -1,0 +1,71 @@
+﻿@model IEnumerable<polnuyaPetch.Models.MenuItem>
+
+@{
+    ViewData["Title"] = "Меню";
+}
+
+<section class="menu-page">
+    <div class="container">
+        <div class="menu-title-block">
+            <h1 class="section-title">Наше меню</h1>
+        </div>
+
+        <form id="filterForm" method="get" asp-controller="Home" asp-action="Menu" class="menu-container-flex">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" name="searchTerm" placeholder="Поиск..."
+                           value="@ViewContext.HttpContext.Request.Query["searchTerm"]"
+                           autocomplete="off">
+                </div>
+
+                <div class="filter-group">
+                    <h3>Категории</h3>
+                    @foreach (var cat in new[] { "Супы", "Салаты", "Напитки", "Мясо", "Выпечка" })
+                    {
+                        <label class="filter-item">
+                            <input type="checkbox" name="categories" value="@cat"
+                                   onchange="document.getElementById('filterForm').submit()"
+                                   @(ViewContext.HttpContext.Request.Query["categories"].Contains(cat) ? "checked" : "")>
+                            @cat
+                        </label>
+                    }
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn" style="width:100%; border:none; cursor:pointer; background-color: var(--header-green);">Найти</button>
+                    <a asp-action="Menu" class="btn" style="width:100%; text-decoration:none; text-align:center; background:#6d6155; color: white;">Сбросить всё</a>
+                </div>
+            </aside>
+
+            <div class="menu-grid">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="menu-card">
+                            <div class="card-image-wrapper">
+                                <img src="~/images/@item.ImagePath" alt="@item.Name" class="card-img">
+                                <div class="card-price">@item.Price.ToString("0")р.</div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">@item.Name</h3>
+                                <p class="card-text">@item.Description</p>
+                                @* ИЗМЕНЕНО: Размер 14px, серый цвет и небольшой отступ *@
+                                <p style="font-size: 14px; color: #8a8a8a; margin-top: 12px; font-weight: 500; letter-spacing: 0.5px;">
+                                    #@item.Category.ToLower()
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="grid-column: 1/-1; text-align: center; padding: 50px 0;">
+                        <p style="font-size: 24px; opacity: 0.7;">Блюда не найдены :(</p>
+                        <p style="font-size: 16px; opacity: 0.5;">Попробуйте ввести другое слово или сбросить фильтры</p>
+                    </div>
+                }
+            </div>
+        </form>
+    </div>
+</section>
