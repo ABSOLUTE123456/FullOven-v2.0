@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Вход";
+}
+
+<section class="booking-page" style="padding: 100px 0; min-height: 80vh;">
+    <div class="container">
+        <div class="booking-header">
+            <h1 class="section-title">Авторизация</h1>
+            <p class="booking-subtitle">Войдите, чтобы управлять вашими бронированиями</p>
+        </div>
+
+        <div class="booking-card" style="max-width: 500px; margin: 0 auto;">
+            <form class="booking-form" asp-action="Login" method="post">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <input type="text" name="login" placeholder="Логин" required
+                           style="width: 100%; padding: 12px; border-radius: 10px; border: none;">
+
+                    <input type="password" name="password" placeholder="Пароль" required
+                           style="width: 100%; padding: 12px; border-radius: 10px; border: none;">
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <p style="color: #ff4d4d; text-align: center; margin-top: 15px;">@ViewBag.Error</p>
+                }
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="booking-btn" style="width: 100%;">Войти</button>
+                </div>
+
+                <p style="text-align: center; margin-top: 15px; color: #3d342d;">
+                    Нет аккаунта? <a asp-action="Register" style="color: #8b4513; font-weight: bold;">Зарегистрироваться</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</section>

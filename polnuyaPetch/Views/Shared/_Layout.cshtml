@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -24,6 +27,24 @@
                 <a asp-controller="Home" asp-action="Addresses" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Addresses" ? "active" : "")">наши места</a>
                 <a asp-controller="Home" asp-action="Reservation" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reservation" ? "active" : "")">бронирование</a>
                 <a asp-controller="Home" asp-action="Connection" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Connection" ? "active" : "")">контакты</a>
+
+                <!-- АДМИНКА (Заказы) -->
+                <a asp-controller="Home" asp-action="AdminReservations" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "AdminReservations" ? "active" : "")">заказы</a>
+
+                <!-- ЛОГИКА АККАУНТА -->
+                @{
+                    var userLogin = HttpContextAccessor.HttpContext?.Session.GetString("UserLogin");
+                }
+
+                @if (!string.IsNullOrEmpty(userLogin))
+                {
+                    <a asp-controller="Home" asp-action="Profile" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")">профиль</a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Login" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Login" ? "active" : "")">войти</a>
+                }
+
                 <div class="nav-underline"></div>
             </nav>
         </div>
@@ -34,13 +55,21 @@
     <script>
         const underline = document.querySelector('.nav-underline');
         function moveUnderline(element) {
-            if (element) {
+            if (element && underline) {
                 underline.style.left = element.offsetLeft + 'px';
                 underline.style.width = element.offsetWidth + 'px';
             }
         }
-        window.addEventListener('load', () => moveUnderline(document.querySelector('.nav-link.active')));
-        window.addEventListener('resize', () => moveUnderline(document.querySelector('.nav-link.active')));
+
+        window.addEventListener('load', () => {
+            const activeLink = document.querySelector('.nav-link.active');
+            moveUnderline(activeLink);
+        });
+
+        window.addEventListener('resize', () => {
+            const activeLink = document.querySelector('.nav-link.active');
+            moveUnderline(activeLink);
+        });
     </script>
 </body>
 </html>

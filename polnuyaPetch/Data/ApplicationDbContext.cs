@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using polnuyaPetch.Models;
-using System.Collections.Generic;
 
 namespace polnuyaPetch.Data
 {
@@ -11,7 +10,11 @@ namespace polnuyaPetch.Data
         {
         }
 
-        // Исправлено: S должна быть заглавной (DbSet)
         public DbSet<MenuItem> MenuItems { get; set; }
+
+        public DbSet<Reservation> Reservations { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
     }
 }

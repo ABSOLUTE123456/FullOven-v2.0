@@ -1,4 +1,6 @@
-﻿@{
+﻿@model polnuyaPetch.Models.Reservation
+
+@{
     ViewData["Title"] = "Бронирование";
 }
 
@@ -12,8 +14,20 @@
             </p>
         </div>
 
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success" style="color: #28a745; text-align: center; margin-bottom: 20px; font-weight: bold;">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
         <div class="booking-card">
-            <form class="booking-form" method="post">
+            <!-- Добавили asp-action и asp-controller, чтобы форма знала куда идти -->
+            <form class="booking-form" method="post" asp-action="Reservation" asp-controller="Home">
+
+                <!-- Вывод ошибок валидации, если что-то пойдет не так -->
+                <div asp-validation-summary="All" style="color: #ff4d4d; font-size: 0.9em; margin-bottom: 15px;"></div>
+
                 <div class="form-row">
                     <input type="text" name="Name" placeholder="Введите имя" required>
                     <input type="email" name="Email" placeholder="Email" required>
@@ -23,10 +37,11 @@
                     <input type="number" name="Guests" placeholder="Кол-во гостей">
                 </div>
                 <div class="form-row">
-                    <input type="date" name="Date">
-                    <input type="time" name="Time">
+                    <input type="date" name="Date" required>
+                    <input type="time" name="Time" required>
                 </div>
                 <textarea name="Message" placeholder="Оставить комментарий" rows="4"></textarea>
+
                 <button type="submit" class="booking-btn">Забронировать</button>
             </form>
         </div>

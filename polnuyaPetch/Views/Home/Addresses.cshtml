@@ -2,40 +2,113 @@
     ViewData["Title"] = "Наши места";
 }
 
-<section class="places-page">
+<section class="places-page" style="padding: 60px 0; background-color: #3d342d; min-height: 100vh; color: white;">
     <div class="container">
-        <div class="menu-title-block">
-            <h1 class="section-title">Наши заведения</h1>
-            <div class="title-underline"></div>
+        <!-- Блок заголовка: text-align: center для текста и margin: 0 auto для линии -->
+        <div class="menu-title-block" style="text-align: center; margin-bottom: 50px;">
+            <h1 class="section-title" style="color: #ffffff; font-size: 2.5rem; text-transform: uppercase; border: none; margin-bottom: 10px;">
+                Наши заведения
+            </h1>
+            <!-- Тонкая белая полоска центрирована -->
+            <div style="width: 80px; height: 1px; background-color: #ffffff; opacity: 0.8; margin: 0 auto;"></div>
         </div>
 
-        <div class="places-grid">
-            <!-- Заведение 1 -->
+        <div class="places-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+            <!-- Заведение 1: Москва -->
             <div class="place-card">
-                <div class="place-info">
+                <div class="place-image-wrap">
+                    <img src="~/images/image 10.png" alt="Москва" class="place-img">
+                </div>
+                <div class="place-info-box">
                     <h3>Элитный центр</h3>
-                    <p>Ул. Императорская, д. 3, стр. 1<br>г. Москва, 119019</p>
+                    <p>Москва, ул. Императорская, д. 3</p>
+                    <a href="https://yandex.ru" target="_blank" class="map-link">Показать на карте →</a>
                 </div>
-                <img src="~/images/image 10.png" alt="Центр" class="place-img">
             </div>
 
-            <!-- Заведение 2 -->
+            <!-- Заведение 2: Нижний Новгород -->
             <div class="place-card">
-                <div class="place-info">
+                <div class="place-image-wrap">
+                    <img src="~/images/image 11.png" alt="НН" class="place-img">
+                </div>
+                <div class="place-info-box">
                     <h3>Уютный район</h3>
-                    <p>Ул. Липовая Аллея, д. 27<br>г. Нижний Новгород, 603105</p>
+                    <p>Н. Новгород, ул. Липовая Аллея, 27</p>
+                    <a href="https://yandex.ru" target="_blank" class="map-link">Показать на карте →</a>
                 </div>
-                <img src="~/images/image 11.png" alt="Район" class="place-img">
             </div>
 
-            <!-- Заведение 3 -->
+            <!-- Заведение 3: Сочи -->
             <div class="place-card">
-                <div class="place-info">
-                    <h3>Туристический</h3>
-                    <p>Центральная Набережная, д. 12<br>г. Сочи, 354000</p>
+                <div class="place-image-wrap">
+                    <img src="~/images/image 12.png" alt="Сочи" class="place-img">
                 </div>
-                <img src="~/images/image 12.png" alt="Сочи" class="place-img">
+                <div class="place-info-box">
+                    <h3>Туристический</h3>
+                    <p>Сочи, Центральная Набережная, 12</p>
+                    <a href="https://yandex.ru" target="_blank" class="map-link">Показать на карте →</a>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    .place-card {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+        .place-card:hover {
+            transform: translateY(-10px);
+            border-color: #ffffff;
+        }
+
+    .place-image-wrap {
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .place-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .place-info-box {
+        padding: 25px;
+        color: white;
+    }
+
+        .place-info-box h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .place-info-box p {
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            opacity: 0.7;
+        }
+
+    .map-link {
+        display: inline-block;
+        color: #ffffff;
+        border: 1px solid #ffffff;
+        background: transparent;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .map-link:hover {
+            background: white;
+            color: #3d342d;
+        }
+</style>

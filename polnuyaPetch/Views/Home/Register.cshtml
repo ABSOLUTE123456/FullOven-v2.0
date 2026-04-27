@@ -1,0 +1,38 @@
+﻿@model polnuyaPetch.Models.User
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<section class="booking-page" style="padding: 100px 0; min-height: 80vh;">
+    <div class="container">
+        <div class="booking-header">
+            <h1 class="section-title">Создать аккаунт</h1>
+            <p class="booking-subtitle">Присоединяйтесь к числу наших постоянных гостей</p>
+        </div>
+
+        <div class="booking-card" style="max-width: 500px; margin: 0 auto;">
+            <form class="booking-form" asp-action="Register" method="post">
+                <div asp-validation-summary="All" style="color: #ff4d4d; font-size: 0.9em; margin-bottom: 10px;"></div>
+
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <input asp-for="Login" placeholder="Придумайте логин" required
+                           style="width: 100%; padding: 12px; border-radius: 10px; border: none;">
+
+                    <input asp-for="Password" type="password" placeholder="Пароль" required
+                           style="width: 100%; padding: 12px; border-radius: 10px; border: none;">
+
+                    <input asp-for="Email" type="email" placeholder="Ваш Email"
+                           style="width: 100%; padding: 12px; border-radius: 10px; border: none;">
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="booking-btn" style="width: 100%;">Зарегистрироваться</button>
+                </div>
+
+                <p style="text-align: center; margin-top: 15px; color: #3d342d;">
+                    Уже есть аккаунт? <a asp-action="Login" style="color: #8b4513; font-weight: bold;">Войти</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<polnuyaPetch.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Панель управления бронированиями";
+}
+
+<section class="admin-page" style="padding: 50px 0; background-color: #3d342d; min-height: 100vh; color: white; font-family: Bellota;">
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 40px;">Список активных бронирований</h1>
+
+        <div class="table-responsive" style="background: #ece0c9; border-radius: 15px; padding: 20px; color: #3d342d; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #3d342d;">
+                        <th style="padding: 10px; text-align: left;">Дата заказа</th>
+                        <th style="padding: 10px; text-align: left;">Имя</th>
+                        <th style="padding: 10px; text-align: left;">Контакты</th>
+                        <th style="padding: 10px; text-align: center;">Гости</th>
+                        <th style="padding: 10px; text-align: left;">Дата и Время</th>
+                        <th style="padding: 10px; text-align: left;">Комментарий</th>
+                        <th style="padding: 10px; text-align: center;">Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #ccc;">
+                            <td style="padding: 10px;">@item.CreatedAt.ToString("dd.MM HH:mm")</td>
+                            <td style="padding: 10px; font-weight: bold;">@item.Name @item.LastName</td>
+                            <td style="padding: 10px;">@item.Email</td>
+                            <td style="padding: 10px; text-align: center;">@item.Guests</td>
+                            <td style="padding: 10px; font-weight: bold;">@item.Date в @item.Time</td>
+                            <td style="padding: 10px; font-size: 0.9em;">@item.Message</td>
+                            <td style="padding: 10px; text-align: center;">
+                                <form asp-action="DeleteReservation" asp-controller="Home" method="post" onsubmit="return confirm('Удалить это бронирование?')">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                        Удалить
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!Model.Any())
+            {
+                <p style="text-align: center; padding: 20px;">Бронирований пока нет.</p>
+            }
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a asp-action="Index" style="color: white; text-decoration: none;">← Вернуться на главную</a>
+        </div>
+    </div>
+</section>

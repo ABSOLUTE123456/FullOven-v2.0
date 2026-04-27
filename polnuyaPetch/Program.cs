@@ -10,6 +10,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllersWithViews();
 
+// ИСПРАВЛЕНИЕ: Добавляем Аксессор для работы сессий внутри View (шапки сайта)
+builder.Services.AddHttpContextAccessor();
+
+// Настройка сессий
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Авто-заполнение базы
@@ -17,7 +28,6 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-
     context.Database.EnsureCreated();
 
     if (!context.MenuItems.Any())
@@ -44,7 +54,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
+// Включаем сессии
+app.UseSession();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
