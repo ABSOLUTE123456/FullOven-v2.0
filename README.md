@@ -15,7 +15,7 @@
 ## 🛠 Технологический стек
 * **Язык:** C#
 * **Платформа:** .NET
-* **Frontend:** HTML / CSS
+* **Frontend:** cshtml / CSS
 * **Инструменты:** Visual Studio, VS Code
 
 ## 💻 Инструкция по запуску
