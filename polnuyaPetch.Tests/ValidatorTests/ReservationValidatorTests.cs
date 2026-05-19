@@ -12,7 +12,7 @@ namespace polnuyaPetch.Tests.ValidatorTests
         {
             var res = new Reservation { Name = "", Email = "test@mail.ru", Guests = 2 };
             var error = ReservationValidator.Validate(res);
-            Assert.IsNull(error);
+            Assert.IsNotNull(error);
         }
 
         [TestMethod]
