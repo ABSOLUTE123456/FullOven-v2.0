@@ -2,15 +2,15 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" style="height: 100%;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - FullOven</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
-    <header class="header">
+<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0; background-color: #3d342d;">
+    <header class="header" style="flex-shrink: 0;">
         <div class="container header-content">
             <div class="logo">
                 <a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: inherit;">
@@ -50,7 +50,15 @@
         </div>
     </header>
 
-    @RenderBody()
+    <main style="flex-grow: 1; flex-shrink: 0;">
+        @RenderBody()
+    </main>
+
+    <footer style="flex-shrink: 0; padding: 20px 0; background-color: #2b2520; color: rgba(255,255,255,0.5); text-align: center; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.05); width: 100%;">
+        <div class="container">
+            <p style="margin: 0;">&copy; @DateTime.Now.Year - FullOven. Все права защищены. <span style="margin-left: 10px; color: #ffffff; opacity: 0.8;">v@(typeof(polnuyaPetch.Controllers.HomeController).Assembly.GetName().Version?.ToString(3) ?? "1.0.0")</span></p>
+        </div>
+    </footer>
 
     <script>
         const underline = document.querySelector('.nav-underline');
