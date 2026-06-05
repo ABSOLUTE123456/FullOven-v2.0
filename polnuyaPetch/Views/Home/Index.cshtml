@@ -1,4 +1,11 @@
-﻿@{
+﻿@if (TempData["ErrorMessage"] != null)
+{
+    <div style="max-width: 800px; margin: 20px auto; padding: 15px; background-color: #f44336; color: white; border-radius: 5px; text-align: center; font-family: sans-serif; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        ❌ @TempData["ErrorMessage"]
+    </div>
+}
+
+@{
     ViewData["Title"] = "Главная";
 }
 

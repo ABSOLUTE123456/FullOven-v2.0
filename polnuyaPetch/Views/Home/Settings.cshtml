@@ -6,7 +6,7 @@
 <div style="max-width: 600px; margin: 50px auto; padding: 30px; background-color: #2b2520; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; font-family: sans-serif;">
 
     <h2 style="margin-top: 0; margin-bottom: 25px; color: #ffffff; font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
-        ⚙️ Настройки приложения
+        ⚙️ Настройки приложения (ЛР18-19)
     </h2>
 
     @if (TempData["SuccessMessage"] != null)
@@ -17,6 +17,17 @@
     }
 
     <form method="post" asp-action="Settings">
+
+        <!-- НОВОЕ: ВЫБОР ТЕКУЩЕЙ РОЛИ СИСТЕМЫ -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #4caf50; font-size: 0.95rem;">
+                Текущая роль в системе (Role)
+            </label>
+            <select name="role" style="width: 100%; padding: 10px; background-color: #3d342d; border: 1px solid #4caf50; border-radius: 5px; color: #ffffff; font-size: 1rem; outline: none;">
+                <!option value="Admin" @(Model.Role == "Admin" ? "selected" : "")>Admin (Полный доступ)</!option>
+                <!option value="User" @(Model.Role == "User" ? "selected" : "")>User (Ограниченный доступ)</!option>
+            </select>
+        </div>
 
         <div style="margin-bottom: 20px;">
             <label style="display: block; margin-bottom: 8px; font-weight: bold; color: rgba(255,255,255,0.8); font-size: 0.95rem;">

@@ -5,6 +5,7 @@ using polnuyaPetch.Data;
 using polnuyaPetch.Models;
 using Microsoft.AspNetCore.Http;
 using polnuyaPetch.Config;
+using polnuyaPetch.Security;
 
 namespace polnuyaPetch.Controllers
 {
@@ -90,6 +91,17 @@ namespace polnuyaPetch.Controllers
             if (user != null)
             {
                 HttpContext.Session.SetString("UserLogin", user.Login);
+
+                if (string.Equals(user.Login, "admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    _appConfig.Role = "Admin";
+                }
+                else
+                {
+                    _appConfig.Role = "User";
+                }
+                _configService.Save(_appConfig);
+
                 return RedirectToAction("Profile");
             }
             ViewBag.Error = "Неверный логин или пароль";
@@ -138,27 +150,49 @@ namespace polnuyaPetch.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
+
+            _appConfig.Role = "User";
+            _configService.Save(_appConfig);
+
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> AdminReservations()
         {
-            var reservations = await _context.Reservations
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
-            return View(reservations);
+            try
+            {
+                AccessControl.RequireAdmin(_appConfig.Role);
+                var reservations = await _context.Reservations
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
+                return View(reservations);
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteReservation(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
-            if (reservation != null)
+            try
             {
-                _context.Reservations.Remove(reservation);
-                await _context.SaveChangesAsync();
+                AccessControl.RequireAdmin(_appConfig.Role);
+                var reservation = await _context.Reservations.FindAsync(id);
+                if (reservation != null)
+                {
+                    _context.Reservations.Remove(reservation);
+                    await _context.SaveChangesAsync();
+                }
+                return RedirectToAction("AdminReservations");
             }
-            return RedirectToAction("AdminReservations");
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         public IActionResult Connection() => View();
@@ -167,19 +201,38 @@ namespace polnuyaPetch.Controllers
 
         public IActionResult Settings()
         {
-            return View(_appConfig);
+            try
+            {
+                AccessControl.RequireAdmin(_appConfig.Role);
+                return View(_appConfig);
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
-        public IActionResult Settings(string storageMode, bool askOnStart)
+        public IActionResult Settings(string storageMode, bool askOnStart, string role)
         {
-            _appConfig.StorageMode = storageMode;
-            _appConfig.AskOnStart = askOnStart;
+            try
+            {
+                AccessControl.RequireAdmin(_appConfig.Role);
+                _appConfig.StorageMode = storageMode;
+                _appConfig.AskOnStart = askOnStart;
+                _appConfig.Role = role;
 
-            _configService.Save(_appConfig);
+                _configService.Save(_appConfig);
 
-            TempData["SuccessMessage"] = "Настройки успешно сохранены в config.json! Перезапустите приложение для применения режима.";
-            return RedirectToAction("Settings");
+                TempData["SuccessMessage"] = $"Настройки успешно сохранены! Текущая роль в системе: {role}.";
+                return RedirectToAction("Settings");
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
