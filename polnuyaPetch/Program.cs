@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using polnuyaPetch.Data;
 using polnuyaPetch.Models;
 using polnuyaPetch.Config;
+using polnuyaPetch.DataMigrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,25 @@ using (var scope = app.Services.CreateScope())
             new MenuItem { Name = "Брусничный морс", Category = "Напитки", Price = 200, ImagePath = "image 9.png", Description = "Натуральный морс из диких ягод." }
         );
         context.SaveChanges();
+    }
+
+    var items = context.MenuItems.ToList();
+    int changedCount = 0;
+    foreach (var item in items)
+    {
+        if (MenuNormalizer.Normalize(item))
+        {
+            changedCount++;
+        }
+    }
+    if (changedCount > 0)
+    {
+        context.SaveChanges();
+        Console.WriteLine($"[MIGRATION] Данные нормализованы. Обновлено объектов: {changedCount}");
+    }
+    else
+    {
+        Console.WriteLine("[MIGRATION] База данных в актуальном состоянии. Миграция не требуется.");
     }
 }
 
