@@ -27,11 +27,9 @@
                 <a asp-controller="Home" asp-action="Addresses" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Addresses" ? "active" : "")">наши места</a>
                 <a asp-controller="Home" asp-action="Reservation" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reservation" ? "active" : "")">бронирование</a>
                 <a asp-controller="Home" asp-action="Connection" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Connection" ? "active" : "")">контакты</a>
-
-                <!-- АДМИНКА (Заказы) -->
                 <a asp-controller="Home" asp-action="AdminReservations" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "AdminReservations" ? "active" : "")">заказы</a>
+                <a asp-controller="Home" asp-action="Settings" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Settings" ? "active" : "")">настройки</a>
 
-                <!-- ЛОГИКА АККАУНТА -->
                 @{
                     var userLogin = HttpContextAccessor.HttpContext?.Session.GetString("UserLogin");
                 }

@@ -1,0 +1,55 @@
+﻿@model polnuyaPetch.Config.AppConfig
+@{
+    ViewData["Title"] = "Настройки системы";
+}
+
+<div style="max-width: 600px; margin: 50px auto; padding: 30px; background-color: #2b2520; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; font-family: sans-serif;">
+
+    <h2 style="margin-top: 0; margin-bottom: 25px; color: #ffffff; font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
+        ⚙️ Настройки приложения
+    </h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="padding: 15px; background-color: #4caf50; color: white; border-radius: 5px; margin-bottom: 20px; font-size: 0.95rem;">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <form method="post" asp-action="Settings">
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: bold; color: rgba(255,255,255,0.8); font-size: 0.95rem;">
+                Режим хранения данных (StorageMode)
+            </label>
+            <select name="storageMode" style="width: 100%; padding: 10px; background-color: #3d342d; border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: #ffffff; font-size: 1rem; outline: none;">
+                <!option value="Database" @(Model.StorageMode == "Database" ? "selected" : "")>Database (База данных SQLite)</!option>
+                <!option value="Memory" @(Model.StorageMode == "Memory" ? "selected" : "")>Memory (В оперативной памяти)</!option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" name="askOnStart" value="true" id="ask" style="width: 18px; height: 18px; accent-color: #4caf50; cursor: pointer;" @(Model.AskOnStart ? "checked" : "") />
+            <input type="hidden" name="askOnStart" value="false" />
+            <label for="ask" style="color: rgba(255,255,255,0.8); font-size: 0.95rem; cursor: pointer; user-select: none;">
+                Спрашивать режим при старте (AskOnStart)
+            </label>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-bottom: 25px;">
+            <h5 style="margin-top: 0; margin-bottom: 12px; color: rgba(255,255,255,0.6); font-size: 1rem; font-weight: normal;">
+                Конфигурация папок (Только чтение):
+            </h5>
+            <ul style="list-style: none; padding-left: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                <li>📁 <strong style="color: #ffffff;">Папка данных:</strong> @Model.DataFolder</li>
+                <li>📝 <strong style="color: #ffffff;">Логи:</strong> @Model.LogsFolder</li>
+                <li>📦 <strong style="color: #ffffff;">Бэкапы:</strong> @Model.BackupsFolder</li>
+            </ul>
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 12px; background-color: #4caf50; border: none; border-radius: 5px; color: #ffffff; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">
+            Сохранить настройки
+        </button>
+
+    </form>
+</div>

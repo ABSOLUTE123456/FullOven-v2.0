@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using polnuyaPetch.Data;
 using polnuyaPetch.Models;
 using Microsoft.AspNetCore.Http;
+using polnuyaPetch.Config;
 
 namespace polnuyaPetch.Controllers
 {
@@ -11,13 +12,17 @@ namespace polnuyaPetch.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _env; // Для работы с путями файлов
+        private readonly IWebHostEnvironment _env;
+        private readonly ConfigService _configService;
+        private readonly AppConfig _appConfig;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IWebHostEnvironment env)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IWebHostEnvironment env, ConfigService configService, AppConfig appConfig)
         {
             _logger = logger;
             _context = context;
             _env = env;
+            _configService = configService;
+            _appConfig = appConfig;
         }
 
         public IActionResult Index() => View();
@@ -55,8 +60,6 @@ namespace polnuyaPetch.Controllers
             }
             return View(booking);
         }
-
-        // --- ЛОГИКА АККАУНТА ---
 
         public IActionResult Register() => View();
 
@@ -105,18 +108,15 @@ namespace polnuyaPetch.Controllers
             return View();
         }
 
-        // МЕТОД ДЛЯ ЗАГРУЗКИ АВАТАРКИ
         [HttpPost]
         public async Task<IActionResult> UpdateAvatar(IFormFile avatar)
         {
             var login = HttpContext.Session.GetString("UserLogin");
             if (avatar != null && login != null)
             {
-                // Создаем папку avatars, если её нет
                 var avatarsDir = Path.Combine(_env.WebRootPath, "avatars");
                 if (!Directory.Exists(avatarsDir)) Directory.CreateDirectory(avatarsDir);
 
-                // Генерируем уникальное имя файла
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatar.FileName);
                 var filePath = Path.Combine(avatarsDir, fileName);
 
@@ -125,7 +125,6 @@ namespace polnuyaPetch.Controllers
                     await avatar.CopyToAsync(stream);
                 }
 
-                // Обновляем путь в базе
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
                 if (user != null)
                 {
@@ -141,8 +140,6 @@ namespace polnuyaPetch.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
-
-        // --- АДМИНКА ---
 
         public async Task<IActionResult> AdminReservations()
         {
@@ -167,6 +164,23 @@ namespace polnuyaPetch.Controllers
         public IActionResult Connection() => View();
 
         public IActionResult Addresses() => View();
+
+        public IActionResult Settings()
+        {
+            return View(_appConfig);
+        }
+
+        [HttpPost]
+        public IActionResult Settings(string storageMode, bool askOnStart)
+        {
+            _appConfig.StorageMode = storageMode;
+            _appConfig.AskOnStart = askOnStart;
+
+            _configService.Save(_appConfig);
+
+            TempData["SuccessMessage"] = "Настройки успешно сохранены в config.json! Перезапустите приложение для применения режима.";
+            return RedirectToAction("Settings");
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
