@@ -1,8 +1,33 @@
 ﻿@if (TempData["ErrorMessage"] != null)
 {
-    <div style="max-width: 800px; margin: 20px auto; padding: 15px; background-color: #f44336; color: white; border-radius: 5px; text-align: center; font-family: sans-serif; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        ❌ @TempData["ErrorMessage"]
+    <div style="max-width: 800px; margin: 30px auto; padding: 15px 25px; background-color: #231e1a; border-left: 4px solid #c9a054; border-radius: 0 6px 6px 0; display: flex; align-items: center; gap: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); font-family: sans-serif; animation: slideInRight 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;">
+        <div style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background-color: rgba(201, 160, 84, 0.1); border-radius: 50%; flex-shrink: 0;">
+            <span style="color: #c9a054; font-size: 1rem; font-weight: bold;">⚠️</span>
+        </div>
+        <div style="flex-grow: 1;">
+            <p style="margin: 0; color: #ffffff; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.3px; line-height: 1.4;">
+                @TempData["ErrorMessage"]
+            </p>
+        </div>
     </div>
+
+    <style>
+        @@keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            70% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
 }
 
 @{

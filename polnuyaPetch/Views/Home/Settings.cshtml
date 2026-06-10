@@ -1,66 +1,248 @@
 ﻿@model polnuyaPetch.Config.AppConfig
 @{
-    ViewData["Title"] = "Настройки системы";
+    ViewData["Title"] = "Управление системой";
 }
 
-<div style="max-width: 600px; margin: 50px auto; padding: 30px; background-color: #2b2520; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); color: #ffffff; font-family: sans-serif;">
-
-    <h2 style="margin-top: 0; margin-bottom: 25px; color: #ffffff; font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
-        ⚙️ Настройки приложения (ЛР18-19)
+<div class="settings-card">
+    <h2 class="settings-title">
+        <span>⚙️</span> Панель конфигурации системы
     </h2>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div style="padding: 15px; background-color: #4caf50; color: white; border-radius: 5px; margin-bottom: 20px; font-size: 0.95rem;">
-            @TempData["SuccessMessage"]
+        <div class="alert-success-custom">
+            ✨ @TempData["SuccessMessage"]
         </div>
     }
 
     <form method="post" asp-action="Settings">
 
-        <!-- НОВОЕ: ВЫБОР ТЕКУЩЕЙ РОЛИ СИСТЕМЫ -->
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #4caf50; font-size: 0.95rem;">
-                Текущая роль в системе (Role)
-            </label>
-            <select name="role" style="width: 100%; padding: 10px; background-color: #3d342d; border: 1px solid #4caf50; border-radius: 5px; color: #ffffff; font-size: 1rem; outline: none;">
-                <!option value="Admin" @(Model.Role == "Admin" ? "selected" : "")>Admin (Полный доступ)</!option>
-                <!option value="User" @(Model.Role == "User" ? "selected" : "")>User (Ограниченный доступ)</!option>
-            </select>
+        <div class="settings-section">
+            <h4 class="section-heading">🔐 Права и Безопасность</h4>
+
+            <div class="form-group-custom">
+                <label>Текущая роль в системе (Role)</label>
+                <select name="role">
+                    <!option value="Admin" @(Model.Role == "Admin" ? "selected" : "")>Admin (Полный доступ к управлению)</!option>
+                    <!option value="User" @(Model.Role == "User" ? "selected" : "")>User (Режим просмотра меню и бронирования)</!option>
+                </select>
+            </div>
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: bold; color: rgba(255,255,255,0.8); font-size: 0.95rem;">
-                Режим хранения данных (StorageMode)
-            </label>
-            <select name="storageMode" style="width: 100%; padding: 10px; background-color: #3d342d; border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: #ffffff; font-size: 1rem; outline: none;">
-                <!option value="Database" @(Model.StorageMode == "Database" ? "selected" : "")>Database (База данных SQLite)</!option>
-                <!option value="Memory" @(Model.StorageMode == "Memory" ? "selected" : "")>Memory (В оперативной памяти)</!option>
-            </select>
+        <div class="settings-section">
+            <h4 class="section-heading">📦 Хранилище и Инфраструктура</h4>
+
+            <div class="form-group-custom">
+                <label>Режим обработки данных (StorageMode)</label>
+                <select name="storageMode">
+                    <!option value="Database" @(Model.StorageMode == "Database" ? "selected" : "")>Database (Реляционная БД SQLite)</!option>
+                    <!option value="Memory" @(Model.StorageMode == "Memory" ? "selected" : "")>Memory (Временный оперативный кэш)</!option>
+                </select>
+            </div>
+
+            <div class="form-group-custom">
+                <label>Лимит бэкапов в ротации (MaxBackupsCount)</label>
+                <input type="number" name="maxBackupsCount" value="@Model.MaxBackupsCount" min="1" max="50" required />
+            </div>
+
+            <div class="checkbox-container-custom">
+                <input type="checkbox" name="askOnStart" value="true" id="ask" @(Model.AskOnStart ? "checked" : "") />
+                <input type="hidden" name="askOnStart" value="false" />
+                <label for="ask">Инициализировать интерактивный опрос при запуске приложения</label>
+            </div>
         </div>
 
-        <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-            <input type="checkbox" name="askOnStart" value="true" id="ask" style="width: 18px; height: 18px; accent-color: #4caf50; cursor: pointer;" @(Model.AskOnStart ? "checked" : "") />
-            <input type="hidden" name="askOnStart" value="false" />
-            <label for="ask" style="color: rgba(255,255,255,0.8); font-size: 0.95rem; cursor: pointer; user-select: none;">
-                Спрашивать режим при старте (AskOnStart)
-            </label>
+        <div class="settings-section">
+            <h4 class="section-heading">🛠 Логирование и Отладка</h4>
+
+            <div class="form-group-custom">
+                <label>Минимальный уровень системных логов (LogLevel)</label>
+                <select name="logLevel">
+                    <!option value="Debug" @(Model.LogLevel == "Debug" ? "selected" : "")>Debug (Подробная трассировка)</!option>
+                    <!option value="Information" @(Model.LogLevel == "Information" ? "selected" : "")>Information (Стандартные события)</!option>
+                    <!option value="Warning" @(Model.LogLevel == "Warning" ? "selected" : "")>Warning (Предупреждения о сбоях)</!option>
+                    <!option value="Error" @(Model.LogLevel == "Error" ? "selected" : "")>Error (Критические исключения)</!option>
+                </select>
+            </div>
+
+            <div class="checkbox-container-custom">
+                <input type="checkbox" name="debugMode" value="true" id="debug" @(Model.DebugMode ? "checked" : "") />
+                <input type="hidden" name="debugMode" value="false" />
+                <label for="debug">Активировать режим разработчика (Вывод StackTrace на экран)</label>
+            </div>
         </div>
 
-        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-bottom: 25px;">
-            <h5 style="margin-top: 0; margin-bottom: 12px; color: rgba(255,255,255,0.6); font-size: 1rem; font-weight: normal;">
-                Конфигурация папок (Только чтение):
-            </h5>
-            <ul style="list-style: none; padding-left: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                <li>📁 <strong style="color: #ffffff;">Папка данных:</strong> @Model.DataFolder</li>
-                <li>📝 <strong style="color: #ffffff;">Логи:</strong> @Model.LogsFolder</li>
-                <li>📦 <strong style="color: #ffffff;">Бэкапы:</strong> @Model.BackupsFolder</li>
-            </ul>
+        <div class="settings-section info-section">
+            <h5 class="info-heading">📁 Зарезервированные директории файловой системы:</h5>
+            <div class="info-grid">
+                <div><span>📍 База данных:</span> <code>@Model.DataFolder/</code></div>
+                <div><span>📝 Логи сервера:</span> <code>@Model.LogsFolder/</code></div>
+                <div><span>📦 Архивы бэкапов:</span> <code>@Model.BackupsFolder/</code></div>
+            </div>
         </div>
 
-        <button type="submit" style="width: 100%; padding: 12px; background-color: #4caf50; border: none; border-radius: 5px; color: #ffffff; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">
-            Сохранить настройки
-        </button>
+        <button type="submit" class="btn-submit-custom">Применить изменения конфигурации</button>
 
     </form>
 </div>
+
+<style>
+    .settings-card {
+        max-width: 680px;
+        margin: 40px auto;
+        padding: 35px;
+        background: linear-gradient(145deg, #2b2520, #211c19);
+        border-radius: 12px;
+        border: 1px solid rgba(201, 160, 84, 0.15);
+        color: #ffffff;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .settings-title {
+        margin: 0 0 30px 0;
+        color: #ffffff;
+        font-size: 1.6rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding-bottom: 15px;
+    }
+
+        .settings-title span {
+            color: #c9a054;
+        }
+
+    .settings-section {
+        margin-bottom: 25px;
+        background: rgba(0, 0, 0, 0.15);
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .section-heading {
+        margin: 0 0 15px 0;
+        color: #c9a054;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .form-group-custom {
+        margin-bottom: 15px;
+    }
+
+        .form-group-custom label {
+            display: block;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.88rem;
+        }
+
+        .form-group-custom select, .form-group-custom input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: #3d342d;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+        }
+
+            .form-group-custom select:focus, .form-group-custom input[type="number"]:focus {
+                border-color: #c9a054;
+                box-shadow: 0 0 8px rgba(201, 160, 84, 0.25);
+                background-color: #443a32;
+            }
+
+    .checkbox-container-custom {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+        .checkbox-container-custom input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #c9a054;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        .checkbox-container-custom label {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+            line-height: 1.4;
+        }
+
+    .info-section {
+        background: rgba(201, 160, 84, 0.03);
+        border: 1px dashed rgba(201, 160, 84, 0.2);
+    }
+
+    .info-heading {
+        margin: 0 0 10px 0;
+        color: rgba(255,255,255,0.5);
+        font-size: 0.85rem;
+        font-weight: normal;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+        font-size: 0.85rem;
+    }
+
+        .info-grid span {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .info-grid code {
+            background: #1c1815;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #c9a054;
+            font-family: Consolas, monospace;
+        }
+
+    .btn-submit-custom {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(90deg, #c9a054, #b0873d);
+        border: none;
+        border-radius: 6px;
+        color: #1c1815;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(201, 160, 84, 0.2);
+        transition: all 0.2s ease;
+    }
+
+        .btn-submit-custom:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(201, 160, 84, 0.4);
+            filter: brightness(1.1);
+        }
+
+    .alert-success-custom {
+        padding: 12px 18px;
+        background-color: rgba(76, 175, 80, 0.15);
+        border-left: 4px solid #4caf50;
+        color: #81c784;
+        border-radius: 0 6px 6px 0;
+        margin-bottom: 25px;
+        font-size: 0.92rem;
+    }
+</style>

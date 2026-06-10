@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite("Data Source=menu.db"));
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<polnuyaPetch.Services.ImportService>();
 
 builder.Services.AddHttpContextAccessor();
 

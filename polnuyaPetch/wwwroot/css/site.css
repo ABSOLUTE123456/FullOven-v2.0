@@ -574,3 +574,26 @@ body {
         grid-template-columns: 1fr; /* 1 колонка на мобилках */
     }
 }
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    border-color: #c9a054 !important;
+    box-shadow: 0 0 8px rgba(201, 160, 84, 0.3) !important;
+}
+/* Полоса прокрутки */
+::-webkit-scrollbar {
+    width: 10px;
+}
+/* Фон полосы */
+::-webkit-scrollbar-track {
+    background: #231e1a;
+}
+/* Сам ползунок */
+::-webkit-scrollbar-thumb {
+    background: #3d342d;
+    border-radius: 5px;
+    border: 2px solid #231e1a;
+}
+    /* Ползунок при наведении */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #c9a054;
+    }

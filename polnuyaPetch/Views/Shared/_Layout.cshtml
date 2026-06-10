@@ -21,14 +21,23 @@
                     <p class="logo-sub">Ресторан русской кухни</p>
                 </a>
             </div>
-            <nav class="nav">
+            <nav class="nav" style="display: flex; align-items: center; gap: 15px; position: relative;">
                 <a asp-controller="Home" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">главная</a>
                 <a asp-controller="Home" asp-action="Menu" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Menu" ? "active" : "")">меню</a>
                 <a asp-controller="Home" asp-action="Addresses" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Addresses" ? "active" : "")">наши места</a>
                 <a asp-controller="Home" asp-action="Reservation" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reservation" ? "active" : "")">бронирование</a>
                 <a asp-controller="Home" asp-action="Connection" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Connection" ? "active" : "")">контакты</a>
-                <a asp-controller="Home" asp-action="AdminReservations" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "AdminReservations" ? "active" : "")">заказы</a>
-                <a asp-controller="Home" asp-action="Settings" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Settings" ? "active" : "")">настройки</a>
+
+                <div class="dropdown-admin" style="position: relative; display: inline-block; padding-bottom: 15px; margin-bottom: -15px;">
+                    <a href="#" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Csv" || ViewContext.RouteData.Values["Action"]?.ToString() == "AdminReservations" || ViewContext.RouteData.Values["Action"]?.ToString() == "Settings" ? "active" : "")" style="cursor: pointer; display: flex; align-items: center; gap: 4px; user-select: none;">
+                        админка <span style="font-size: 0.65rem; transition: transform 0.2s ease;">▼</span>
+                    </a>
+                    <div class="dropdown-content">
+                        <a asp-controller="Home" asp-action="AdminReservations" class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "AdminReservations" ? "dropdown-active" : "")">заказы</a>
+                        <a asp-controller="Home" asp-action="Settings" class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Settings" ? "dropdown-active" : "")">настройки</a>
+                        <a asp-controller="Csv" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Csv" ? "dropdown-active" : "")">таблица (CSV)</a>
+                    </div>
+                </div>
 
                 @{
                     var userLogin = HttpContextAccessor.HttpContext?.Session.GetString("UserLogin");
@@ -57,6 +66,70 @@
             <p style="margin: 0;">&copy; @DateTime.Now.Year - FullOven. Все права защищены. <span style="margin-left: 10px; color: #ffffff; opacity: 0.8;">v@(typeof(polnuyaPetch.Controllers.HomeController).Assembly.GetName().Version?.ToString(3) ?? "1.0.0")</span></p>
         </div>
     </footer>
+
+    <style>
+        .dropdown-admin {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+            margin-bottom: -15px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #2b2520;
+            min-width: 190px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.6);
+            border: 1px solid rgba(201, 160, 84, 0.2);
+            border-radius: 6px;
+            z-index: 99999;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: -5px;
+            padding: 5px 0;
+        }
+
+            .dropdown-content::before {
+                content: '';
+                position: absolute;
+                top: -15px;
+                left: 0;
+                width: 100%;
+                height: 15px;
+            }
+
+            .dropdown-content a {
+                color: rgba(255,255,255,0.75) !important;
+                padding: 12px 18px !important;
+                text-decoration: none !important;
+                display: block !important;
+                font-size: 0.9rem !important;
+                text-align: left !important;
+                transition: all 0.2s ease !important;
+            }
+
+                .dropdown-content a:hover {
+                    background-color: #3d342d !important;
+                    color: #c9a054 !important;
+                    padding-left: 22px !important;
+                }
+
+            .dropdown-content .dropdown-active {
+                color: #c9a054 !important;
+                font-weight: 600 !important;
+                background-color: rgba(201, 160, 84, 0.05) !important;
+            }
+
+        .dropdown-admin:hover .dropdown-content {
+            display: block !important;
+        }
+
+        .dropdown-admin:hover .nav-link span {
+            transform: rotate(180deg);
+        }
+    </style>
 
     <script>
         const underline = document.querySelector('.nav-underline');

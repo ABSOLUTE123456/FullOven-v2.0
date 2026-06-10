@@ -6,6 +6,8 @@ using polnuyaPetch.Models;
 using Microsoft.AspNetCore.Http;
 using polnuyaPetch.Config;
 using polnuyaPetch.Security;
+using polnuyaPetch.Services;
+using System.Text.Json;
 
 namespace polnuyaPetch.Controllers
 {
@@ -16,14 +18,16 @@ namespace polnuyaPetch.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly ConfigService _configService;
         private readonly AppConfig _appConfig;
+        private readonly ImportService _importService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IWebHostEnvironment env, ConfigService configService, AppConfig appConfig)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IWebHostEnvironment env, ConfigService configService, AppConfig appConfig, ImportService importService)
         {
             _logger = logger;
             _context = context;
             _env = env;
             _configService = configService;
             _appConfig = appConfig;
+            _importService = importService;
         }
 
         public IActionResult Index() => View();
@@ -61,7 +65,6 @@ namespace polnuyaPetch.Controllers
             }
             return View(booking);
         }
-
         public IActionResult Register() => View();
 
         [HttpPost]
@@ -198,7 +201,6 @@ namespace polnuyaPetch.Controllers
         public IActionResult Connection() => View();
 
         public IActionResult Addresses() => View();
-
         public IActionResult Settings()
         {
             try
@@ -214,24 +216,85 @@ namespace polnuyaPetch.Controllers
         }
 
         [HttpPost]
-        public IActionResult Settings(string storageMode, bool askOnStart, string role)
+        public IActionResult Settings(string storageMode, bool askOnStart, string role, string logLevel, bool debugMode, int maxBackupsCount)
         {
             try
             {
                 AccessControl.RequireAdmin(_appConfig.Role);
+
                 _appConfig.StorageMode = storageMode;
                 _appConfig.AskOnStart = askOnStart;
                 _appConfig.Role = role;
+                _appConfig.LogLevel = logLevel;
+                _appConfig.DebugMode = debugMode;
+                _appConfig.MaxBackupsCount = maxBackupsCount;
 
                 _configService.Save(_appConfig);
 
-                TempData["SuccessMessage"] = $"Настройки успешно сохранены! Текущая роль в системе: {role}.";
+                TempData["SuccessMessage"] = "Конфигурация системы успешно обновлена в config.json!";
                 return RedirectToAction("Settings");
             }
             catch (ArgumentException ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
+            }
+        }
+
+        public IActionResult ImportMenu()
+        {
+            try
+            {
+                AccessControl.RequireAdmin(_appConfig.Role);
+                return View();
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportMenu(IFormFile jsonFile, string importMode)
+        {
+            try
+            {
+                AccessControl.RequireAdmin(_appConfig.Role);
+
+                if (jsonFile == null || jsonFile.Length == 0)
+                {
+                    TempData["ErrorMessage"] = "Файл не выбран.";
+                    return RedirectToAction("ImportMenu");
+                }
+
+                using var stream = jsonFile.OpenReadStream();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var importedItems = await JsonSerializer.DeserializeAsync<List<MenuItem>>(stream, options);
+
+                if (importedItems == null)
+                {
+                    TempData["ErrorMessage"] = "Не удалось прочитать данные из файла.";
+                    return RedirectToAction("ImportMenu");
+                }
+
+                if (importMode == "Merge")
+                {
+                    var result = _importService.MergeImport(importedItems);
+                    TempData["SuccessMessage"] = $"Умное объединение завершено! Добавлено новых блюд: {result.added}, пропущено дубликатов: {result.skipped}.";
+                }
+                else
+                {
+                    _importService.ReplaceImport(importedItems);
+                    TempData["SuccessMessage"] = $"Замена меню успешно выполнена! Загружено объектов: {importedItems.Count}.";
+                }
+
+                return RedirectToAction("ImportMenu");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Ошибка импорта: {ex.Message}";
+                return RedirectToAction("ImportMenu");
             }
         }
 
