@@ -2,6 +2,7 @@
 {
     public class AppConfig
     {
+        public string Role { get; set; } = "User";
         public string StorageMode { get; set; } = "Database";
         public bool AskOnStart { get; set; } = false;
         public string DataFolder { get; set; } = "data";
