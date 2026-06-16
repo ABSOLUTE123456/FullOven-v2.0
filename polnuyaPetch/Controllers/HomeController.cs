@@ -32,21 +32,56 @@ namespace polnuyaPetch.Controllers
 
         public IActionResult Index() => View();
 
-        public async Task<IActionResult> Menu(string? searchTerm, string[]? categories)
+        // Модифицированный метод Menu под требования ЛР23
+        public async Task<IActionResult> Menu(string? searchTerm, string[]? categories, bool isRepeat = false)
         {
             var allItems = await _context.MenuItems.ToListAsync();
             var query = allItems.AsEnumerable();
 
+            // Если вызван повтор последнего фильтра (Команда 20)
+            if (isRepeat)
+            {
+                searchTerm = _appConfig.LastFilterText;
+                categories = !string.IsNullOrEmpty(_appConfig.LastFilterCategories)
+                    ? _appConfig.LastFilterCategories.Split(',')
+                    : null;
+
+                ViewBag.IsRepeat = true;
+            }
+
+            // 19.1 Расширенный поиск по Name ИЛИ Description (без учета регистра)
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 var search = searchTerm.Trim();
-                query = query.Where(m => m.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(m =>
+                    (m.Name ?? "").Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    (m.Description ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)
+                );
             }
 
+            // 19.2 Фильтрация по категориям
             if (categories != null && categories.Length > 0)
             {
                 query = query.Where(m => categories.Contains(m.Category));
             }
+
+            // Сохранение состояния фильтра в config.json
+            if (!isRepeat)
+            {
+                _appConfig.LastFilterText = searchTerm ?? "";
+                _appConfig.LastFilterCategories = categories != null ? string.Join(",", categories) : "";
+                _configService.Save(_appConfig);
+
+                _logger.LogInformation($"ADV_FILTER text=\"{_appConfig.LastFilterText}\" categories={_appConfig.LastFilterCategories}");
+            }
+            else
+            {
+                _logger.LogInformation($"ADV_FILTER_REPEAT text=\"{searchTerm}\" categories={_appConfig.LastFilterCategories}");
+            }
+
+            // Передаем параметры обратно в View для отображения в форме поиска
+            ViewBag.CurrentSearch = searchTerm;
+            ViewBag.CurrentCategories = categories ?? Array.Empty<string>();
 
             return View(query.ToList());
         }
@@ -239,69 +274,6 @@ namespace polnuyaPetch.Controllers
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-        }
-
-        public IActionResult ImportMenu()
-        {
-            try
-            {
-                AccessControl.RequireAdmin(_appConfig.Role);
-                return View();
-            }
-            catch (ArgumentException ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ImportMenu(IFormFile jsonFile, string importMode)
-        {
-            try
-            {
-                AccessControl.RequireAdmin(_appConfig.Role);
-
-                if (jsonFile == null || jsonFile.Length == 0)
-                {
-                    TempData["ErrorMessage"] = "Файл не выбран.";
-                    return RedirectToAction("ImportMenu");
-                }
-
-                using var stream = jsonFile.OpenReadStream();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var importedItems = await JsonSerializer.DeserializeAsync<List<MenuItem>>(stream, options);
-
-                if (importedItems == null)
-                {
-                    TempData["ErrorMessage"] = "Не удалось прочитать данные из файла.";
-                    return RedirectToAction("ImportMenu");
-                }
-
-                if (importMode == "Merge")
-                {
-                    var result = _importService.MergeImport(importedItems);
-                    TempData["SuccessMessage"] = $"Умное объединение завершено! Добавлено новых блюд: {result.added}, пропущено дубликатов: {result.skipped}.";
-                }
-                else
-                {
-                    _importService.ReplaceImport(importedItems);
-                    TempData["SuccessMessage"] = $"Замена меню успешно выполнена! Загружено объектов: {importedItems.Count}.";
-                }
-
-                return RedirectToAction("ImportMenu");
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Ошибка импорта: {ex.Message}";
-                return RedirectToAction("ImportMenu");
-            }
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -14,5 +14,9 @@
         public string BackupsFolder { get; set; } = "backups";
         public string ExportsFolder { get; set; } = "exports";
         public string ReportsFolder { get; set; } = "reports";
+
+        // Поля для ЛР23 (сохранение параметров последнего расширенного поиска)
+        public string LastFilterText { get; set; } = "";
+        public string LastFilterCategories { get; set; } = "Any";
     }
 }

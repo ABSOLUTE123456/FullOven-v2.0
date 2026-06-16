@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Меню";
+    // Получаем список выбранных категорий для правильного отображения чекбоксов
+    var currentCategories = ViewBag.CurrentCategories as string[] ?? Array.Empty<string>();
 }
 
 <section class="menu-page">
@@ -10,11 +12,23 @@
             <h1 class="section-title">Наше меню</h1>
         </div>
 
+        @if (ViewBag.IsRepeat == true)
+        {
+            <div style="background-color: rgba(109, 97, 85, 0.1); border-left: 5px solid var(--header-green); padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+                <p style="margin: 0; font-size: 15px; font-weight: 500;">
+                    🔄 Повтор последнего фильтра из конфигурации:
+                    <strong>Текст:</strong> "@(string.IsNullOrEmpty(ViewBag.CurrentSearch) ? "[пусто]" : ViewBag.CurrentSearch)",
+                    <strong>Категории:</strong> @(currentCategories.Length == 0 ? "Все" : string.Join(", ", currentCategories))
+                </p>
+            </div>
+        }
+
         <form id="filterForm" method="get" asp-controller="Home" asp-action="Menu" class="menu-container-flex">
             <aside class="sidebar">
                 <div class="search-box">
-                    <input type="text" name="searchTerm" placeholder="Поиск..."
-                           value="@ViewContext.HttpContext.Request.Query["searchTerm"]"
+                    @* 19.1 Поиск работает по названию и описанию блюда *@
+                    <input type="text" name="searchTerm" placeholder="Поиск (по названию или описанию)..."
+                           value="@ViewBag.CurrentSearch"
                            autocomplete="off">
                 </div>
 
@@ -25,14 +39,19 @@
                         <label class="filter-item">
                             <input type="checkbox" name="categories" value="@cat"
                                    onchange="document.getElementById('filterForm').submit()"
-                                   @(ViewContext.HttpContext.Request.Query["categories"].Contains(cat) ? "checked" : "")>
+                            @(currentCategories.Contains(cat) ? "checked" : "")>
                             @cat
                         </label>
                     }
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    @* 19) Кнопка применения расширенного фильтра *@
                     <button type="submit" class="btn" style="width:100%; border:none; cursor:pointer; background-color: var(--header-green);">Найти</button>
+
+                    @* 20) Кнопка повторения последнего сохраненного фильтра *@
+                    <a asp-action="Menu" asp-route-isRepeat="true" class="btn" style="width:100%; text-decoration:none; text-align:center; background:#4a423a; color: white;">Повторить фильтр</a>
+
                     <a asp-action="Menu" class="btn" style="width:100%; text-decoration:none; text-align:center; background:#6d6155; color: white;">Сбросить всё</a>
                 </div>
             </aside>
@@ -50,7 +69,6 @@
                             <div class="card-content">
                                 <h3 class="card-title">@item.Name</h3>
                                 <p class="card-text">@item.Description</p>
-                                @* ИЗМЕНЕНО: Размер 14px, серый цвет и небольшой отступ *@
                                 <p style="font-size: 14px; color: #8a8a8a; margin-top: 12px; font-weight: 500; letter-spacing: 0.5px;">
                                     #@item.Category.ToLower()
                                 </p>
