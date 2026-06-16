@@ -12,39 +12,39 @@
         </div>
 
         <div class="places-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-            <!-- Заведение 1: Москва -->
+            <!-- Левая карточка: Москва -->
             <div class="place-card">
                 <div class="place-image-wrap">
                     <img src="~/images/image 10.png" alt="Москва" class="place-img">
                 </div>
                 <div class="place-info-box">
                     <h3>Элитный центр</h3>
-                    <p>Москва, ул. Императорская, д. 3</p>
-                    <a href="https://yandex.ru" target="_blank" class="map-link">Показать на карте →</a>
+                    <p>Москва, ул. Арбат, 32</p>
+                    <a href="https://www.google.com/maps/d/u/1/edit?mid=15IVWs2UdMKUxkupvRQtidLjkguaLsBw&usp=sharing" target="_blank" class="map-link">Посмотреть на карте →</a>
                 </div>
             </div>
 
-            <!-- Заведение 2: Нижний Новгород -->
+            <!-- Центральная карточка: Великий Новгород -->
             <div class="place-card">
                 <div class="place-image-wrap">
                     <img src="~/images/image 11.png" alt="НН" class="place-img">
                 </div>
                 <div class="place-info-box">
                     <h3>Уютный район</h3>
-                    <p>Н. Новгород, ул. Липовая Аллея, 27</p>
-                    <a href="https://yandex.ru" target="_blank" class="map-link">Показать на карте →</a>
+                    <p>Великий Новгород, ул. Ломоносова, 27</p>
+                    <a href="https://www.google.com/maps/d/u/1/edit?mid=15IVWs2UdMKUxkupvRQtidLjkguaLsBw&usp=sharing" target="_blank" class="map-link">Посмотреть на карте →</a>
                 </div>
             </div>
 
-            <!-- Заведение 3: Сочи -->
+            <!-- Правая карточка: Сочи -->
             <div class="place-card">
                 <div class="place-image-wrap">
                     <img src="~/images/image 12.png" alt="Сочи" class="place-img">
                 </div>
                 <div class="place-info-box">
                     <h3>Туристический</h3>
-                    <p>Сочи, Центральная Набережная, 12</p>
-                    <a href="https://yandex.ru" target="_blank" class="map-link">Показать на карте →</a>
+                    <p>Сочи, ЖК Новая заря, 1Б</p>
+                    <a href="https://www.google.com/maps/d/u/1/edit?mid=15IVWs2UdMKUxkupvRQtidLjkguaLsBw&usp=sharing" target="_blank" class="map-link">Посмотреть на карте →</a>
                 </div>
             </div>
         </div>
@@ -91,6 +91,7 @@
             font-size: 0.95rem;
             margin-bottom: 25px;
             opacity: 0.7;
+            min-height: 44px;
         }
 
     .map-link {
@@ -102,6 +103,9 @@
         border-radius: 8px;
         text-decoration: none;
         font-weight: 500;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
         transition: 0.3s;
     }
 
